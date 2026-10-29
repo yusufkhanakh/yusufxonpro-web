@@ -13,7 +13,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header">
         <div class="brand">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -21,24 +20,23 @@
         </div>
     </header>
 
-    <!-- Qidiruv paneli -->
     <section class="search-container">
         <div class="search-box glass">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#86868b" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="qidiruvInput" class="search-input" placeholder="Google bo'yicha qidiring yoki savol bering..." onkeypress="handleKey(event)">
+            <input type="text" id="qidiruvInput" class="search-input" placeholder="Google bo'yicha qidiring..." onkeypress="handleKey(event)">
             <button class="search-btn" onclick="qidiruvBoshlash()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </div>
     </section>
 
-    <!-- Yuklanish indikatori -->
+    <!-- Loading Spinner -->
     <div id="loading" class="loading">
         <div class="spinner"></div>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Google va AI ma'lumotlarni tahlil qilmoqda...</p>
     </div>
 
-    <!-- AI Overview (SGE) bloki -->
+    <!-- AI Overview (SGE) -->
     <div id="aiOverview" class="ai-overview glass">
         <div class="ai-header">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3-1.9 6.8L3 12l7.1 2.2L12 21l2.2-6.8L21 12l-6.8-2.2z"/></svg>
@@ -49,21 +47,16 @@
 
     <!-- Natijalar bloki -->
     <main id="resultsSection" class="results-section" style="display: none;">
-        <!-- Tablar -->
         <div class="nav-tabs">
             <div class="tab-item active">Barchasi</div>
             <div class="tab-item">Rasmlar</div>
             <div class="tab-item">Videolar</div>
         </div>
 
-        <!-- Rasmlar va Videolar karuseli -->
         <div class="media-scroll" id="mediaContainer"></div>
-
-        <!-- Veb-saytlar natijalari -->
         <div id="webResultsList" style="display: flex; flex-direction: column; gap: 14px;"></div>
     </main>
 
-    <!-- Script JS -->
     <script src="script.js"></script>
 </body>
 </html>
