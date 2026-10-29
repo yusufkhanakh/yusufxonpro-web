@@ -8,64 +8,64 @@ async function qidiruvBoshlash() {
     const query = document.getElementById('qidiruvInput').value.trim();
     if (!query) return;
 
-    // Interface Reset
+    // UI tozalash va Loading ko'rsatish
     document.getElementById('loading').style.display = 'block';
     document.getElementById('aiOverview').style.display = 'none';
     document.getElementById('resultsSection').style.display = 'none';
 
     try {
-        // OpenSearch API orqali qidiruv natijalarini olish
-        const res = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=5&namespace=0&format=json&origin=*`);
+        // CORS xatosiz rasmiy Wikipedia Search API orqali qidiruv
+        const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+        const res = await fetch(apiUrl);
         const data = await res.json();
 
-        const titles = data[1] || [];
-        const snippets = data[2] || [];
-        const links = data[3] || [];
+        const searchResults = data.query ? data.query.search : [];
 
-        // UI Elementlar
         const aiText = document.getElementById('aiText');
         const mediaContainer = document.getElementById('mediaContainer');
         const webResultsList = document.getElementById('webResultsList');
 
-        // Shabloni tozalash
         mediaContainer.innerHTML = '';
         webResultsList.innerHTML = '';
 
-        if (titles.length === 0) {
-            aiText.innerHTML = `<strong>"${query}"</strong> bo'yicha aniq ma'lumot topilmadi. Qayta urinib ko'ring.`;
+        if (searchResults.length === 0) {
+            aiText.innerHTML = `<strong>"${query}"</strong> bo'yicha hech qanday natija topilmadi.`;
         } else {
-            // AI Overview generatsiyasi
-            aiText.innerHTML = `<strong>${titles[0]}</strong> bo'yicha AI xulosasi:<br>${snippets[0] || "Tahlil yakunlandi."} Ushbu mavzudagi asosiy manbalar quyida keltirilgan.`;
+            // Birinchi natija bo'yicha AI Overview
+            const firstSnippet = searchResults[0].snippet.replace(/<\/?[^>]+(>|$)/g, "");
+            aiText.innerHTML = `<strong>${searchResults[0].title}</strong> haqida qisqacha xulosa:<br>${firstSnippet}...`;
 
-            // Rasmlar/Videolar karuseli (Simulyatsiya media kartalari)
-            for (let i = 0; i < 4; i++) {
+            // Rasmlar kartasi (Unsplash API simulyatsiyasi)
+            for (let i = 1; i <= 4; i++) {
                 const imgCard = document.createElement('div');
                 imgCard.className = 'media-card';
-                imgCard.innerHTML = `<img src="https://picsum.photos/300/200?random=${i + 1}" alt="Google Image Search">`;
+                imgCard.innerHTML = `<img src="https://picsum.photos/300/200?random=${i}&query=${encodeURIComponent(query)}" alt="Media image">`;
                 mediaContainer.appendChild(imgCard);
             }
 
-            // Saytlar ro'yxatini chiqarish
-            titles.forEach((title, index) => {
+            // Saytlar va qidiruv natijalari kartasi
+            searchResults.forEach(item => {
+                const cleanSnippet = item.snippet.replace(/<\/?[^>]+(>|$)/g, "");
+                const pageUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(item.title)}`;
+                
                 const card = document.createElement('div');
                 card.className = 'web-card glass';
                 card.innerHTML = `
-                    <div class="web-url">${links[index]}</div>
-                    <a href="${links[index]}" target="_blank" class="web-title">${title}</a>
-                    <div class="web-snippet">${snippets[index] || "Google qidiruv natijasi va qisqacha tavsifi."}</div>
+                    <div class="web-url">${pageUrl}</div>
+                    <a href="${pageUrl}" target="_blank" class="web-title">${item.title}</a>
+                    <div class="web-snippet">${cleanSnippet}...</div>
                 `;
                 webResultsList.appendChild(card);
             });
         }
 
-        // Ko'rsatish
         document.getElementById('loading').style.display = 'none';
         document.getElementById('aiOverview').style.display = 'block';
         document.getElementById('resultsSection').style.display = 'flex';
 
     } catch (error) {
-        console.error(error);
+        console.error("Search Error:", error);
         document.getElementById('loading').style.display = 'none';
-        alert("Xatolik yuz berdi. Internet aloqasini tekshiring.");
+        alert("Natijalarni olishda xatolik yuz berdi. Konsolni tekshiring.");
     }
 }
